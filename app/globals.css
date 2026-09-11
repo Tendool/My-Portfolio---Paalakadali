@@ -1,0 +1,470 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   TOKENS
+   Black ground, paper-white type, one high-voltage accent. Hierarchy comes
+   from scale, weight and motion; the accent is rationed so it still reads as a
+   signal when it appears.
+   ========================================================================== */
+@theme {
+  --color-ink: #05060a;
+  --color-ink-2: #0a0c12;
+  --color-paper: #f4f5f7;
+  --color-accent: #8b5cf6;
+  --color-ash: #8b8f9a;
+
+  --font-display: var(--font-display-face), 'Bricolage Grotesque', sans-serif;
+  --font-body: var(--font-body-face), 'Inter', system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius-card: 22px;
+  --radius-pill: 999px;
+}
+
+:root {
+  --ink: #05060a;
+  --paper: #f4f5f7;
+  --accent: #8b5cf6;
+  --glass-blur: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+  background: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+html.lenis {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  /* Deliberately transparent. The WebGL universe and its overlays sit at
+     negative z-index, and per CSS painting order an in-flow body background
+     paints *after* those layers — an opaque body here hides the whole scene.
+     The ink colour lives on <html>, which propagates to the viewport. */
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The galaxy is draggable; stop the drag painting a text selection across
+   half the page. */
+body.is-dragging,
+body.is-dragging * {
+  user-select: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #05060a;
+}
+::-webkit-scrollbar-thumb {
+  background: #23262f;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* The real cursor is hidden only where the custom one is actually running. */
+body.has-cursor,
+body.has-cursor a,
+body.has-cursor button {
+  cursor: none;
+}
+
+/* ==========================================================================
+   Everything below is in the `components` layer on purpose.
+   Tailwind v4 emits utilities into a `utilities` cascade layer, and unlayered
+   rules beat *any* layered rule regardless of specificity. Left unlayered,
+   `.btn { display: inline-flex }` silently defeats `hidden`, and a card's
+   background defeats `hover:bg-*`. Layering restores "utilities win".
+   ========================================================================== */
+@layer components {
+  /* ------------------------------------------------------------------ type */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Oversized headline setting: tight, optically flush, never widowed. */
+  .kinetic {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .outline-type {
+    -webkit-text-stroke: 1.5px rgba(244, 245, 247, 0.5);
+    color: transparent;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(244, 245, 247, 0.45);
+  }
+
+  .accent-glow {
+    text-shadow:
+      0 0 18px rgba(139, 92, 246, 0.55),
+      0 0 60px rgba(139, 92, 246, 0.2);
+  }
+
+  /* ----------------------------------------------------------------- glass */
+  .glass {
+    position: relative;
+    border-radius: var(--radius-card);
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.02) 45%,
+      rgba(5, 6, 10, 0.4)
+    );
+    backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 24px 70px -40px #000;
+    transition:
+      border-color 0.4s ease,
+      background 0.4s ease,
+      transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1),
+      box-shadow 0.4s ease;
+  }
+
+  .glass-hover:hover {
+    transform: translateY(-5px);
+    border-color: rgba(139, 92, 246, 0.45);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 30px 80px -40px #000,
+      0 0 40px -18px rgba(139, 92, 246, 0.5);
+  }
+
+  /* --------------------------------------------------------------- stickers */
+  /* Slightly rotated pills. The tilt is what stops a row of badges reading as
+     a form control and starts it reading as something stuck on. */
+  .sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(244, 245, 247, 0.78);
+    backdrop-filter: blur(10px);
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1),
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+  .sticker-accent {
+    border-color: rgba(139, 92, 246, 0.55);
+    background: rgba(139, 92, 246, 0.12);
+    color: var(--accent);
+  }
+  .sticker-solid {
+    border-color: transparent;
+    background: var(--accent);
+    color: #000;
+    font-weight: 600;
+  }
+  .sticker-tilt-l {
+    transform: rotate(-2.5deg);
+  }
+  .sticker-tilt-r {
+    transform: rotate(2deg);
+  }
+
+  /* --------------------------------------------------------------- buttons */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.05rem 2rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition:
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 10px 40px -12px rgba(139, 92, 246, 0.7);
+  }
+  .btn-accent:hover {
+    box-shadow: 0 16px 54px -12px rgba(139, 92, 246, 0.95);
+  }
+
+  .btn-ghost {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: var(--paper);
+    backdrop-filter: blur(12px);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ---------------------------------------------------------------- marquee */
+  .marquee {
+    display: flex;
+    width: max-content;
+    /* Two identical tracks scrolled by exactly -50% loop seamlessly. */
+    animation: marquee-run var(--marquee-duration, 28s) linear infinite;
+  }
+  .marquee-reverse {
+    animation-direction: reverse;
+  }
+  /* 3D conveyor. The strip is turned in space so its left end recedes and its
+     right end comes toward the viewer; paired with a reversed scroll the items
+     enter small at the left and grow as they travel right.
+
+     `perspective` sits on the clipping wrapper and the rotation on a layer
+     inside it, because the scroll animation owns `transform` on the track
+     itself — putting both on one element means one overwrites the other. */
+  .marquee-3d {
+    perspective: 1700px;
+    perspective-origin: 50% 50%;
+  }
+  .marquee-tilt {
+    /* Negative: a positive rotateY would push the right end away instead. */
+    transform: rotateY(-13deg);
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  }
+  @keyframes marquee-run {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ----------------------------------------------------------------- cursor */
+  .cursor-dot,
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 999px;
+    will-change: transform;
+  }
+  .cursor-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--accent);
+  }
+  .cursor-ring {
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 1px solid rgba(244, 245, 247, 0.45);
+    transition:
+      width 0.28s ease,
+      height 0.28s ease,
+      margin 0.28s ease,
+      border-color 0.28s ease,
+      background 0.28s ease;
+  }
+  .cursor-ring.is-hot {
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.1);
+  }
+
+  /* --------------------------------------------------- constellation line */
+  .constellation-line {
+    fill: none;
+    stroke: url(#constellationGradient);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: url(#constellationGlow);
+  }
+
+  .constellation-track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 8;
+  }
+
+  .star-node {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  /* Unlit stars stay present but dim, so the route is legible up front. */
+  .star-node[data-lit='false'] {
+    opacity: 0.22;
+    transform: scale(0.6);
+  }
+  .star-node[data-lit='true'] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ------------------------------------------------------------ album feed */
+  .viewer {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .viewer-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .thumb {
+    position: relative;
+    flex: 0 0 auto;
+    width: 96px;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-size: cover;
+    background-position: center;
+    transition: all 0.25s ease;
+    cursor: pointer;
+  }
+  .thumb:hover {
+    border-color: rgba(139, 92, 246, 0.6);
+  }
+  .thumb.on {
+    border-color: var(--accent);
+    box-shadow: 0 0 22px -6px rgba(139, 92, 246, 0.9);
+  }
+
+  /* ------------------------------------------------------------------ misc */
+  .rule {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.22), transparent);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  /* Grain. A single tiling SVG turbulence — cheaper than an image request, and
+     it stops large flat black areas from banding. */
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.045;
+    mix-blend-mode: overlay;
+  }
+
+  .vignette {
+    background: radial-gradient(ellipse 100% 80% at 50% 45%, transparent 42%, rgba(0, 0, 0, 0.85) 100%);
+  }
+
+  /* Horizontal rail: the native scrollbar is hidden because GSAP drives it. */
+  .rail {
+    scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   MOTION PREFERENCES — outside the layer so the !important actually lands.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee {
+    animation: none;
+  }
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+  body.has-cursor,
+  body.has-cursor a,
+  body.has-cursor button {
+    cursor: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

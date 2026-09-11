@@ -19,7 +19,7 @@ export const PROFILE = {
   github: "https://github.com/Tendool",
   linkedin: "https://www.linkedin.com/in/sala-tendool-srivatsav/",
   stats: [
-    { v: "13", l: "Projects Shipped" },
+    { v: "17", l: "Projects Shipped" },
     { v: "6", l: "Domains" },
   ],
 };
@@ -186,6 +186,49 @@ export const PROJECTS: Project[] = [
     tags: ["Python", "CUDA", "RAG", "LLMs", "SLMs"],
     b: [
       "Built a multi-agent orchestration platform combining LLMs, SLMs and local models for enterprise agentic workflows.",
+    ],
+  },
+  {
+    n: "TARA — Fully Local Voice Assistant",
+    t: "Sep 2026 — Present",
+    o: "Personal",
+    c: ["agentic"],
+    tags: ["Python", "Ollama", "SLM", "ASR", "TTS"],
+    b: [
+      "Built an end-to-end voice assistant that runs entirely on-device — wake word detection, speech-to-text, a local language model with tool use, and speech synthesis — with no cloud service anywhere in the loop.",
+      "Wired openWakeWord, faster-whisper, a locally served Qwen model and Piper TTS into a single tool-calling loop, verifying each stage round-trip against real microphone input rather than mocking it.",
+    ],
+  },
+  {
+    n: "OJAS — Personal Mobile Assistant",
+    t: "Sep 2026 — Present",
+    o: "Personal",
+    c: ["agentic"],
+    tags: ["Mobile", "Assistant"],
+    b: [
+      "A personal mobile assistant application, currently in active development.",
+    ],
+  },
+  {
+    n: "Business Intelligence Agent over Live Board Data",
+    t: "Aug 2026",
+    o: "Assessment",
+    c: ["agentic"],
+    tags: ["Python", "React", "Docker", "LLM Tool Use"],
+    b: [
+      "Built a conversational agent answering founder-level business questions from two live project-management boards, reconciling a client-code mismatch that turned out to be the real cross-board join key and discarding corrupted rows that would otherwise have silently broken every cross-board metric.",
+      "Wrote and unit-tested the cleaning, normalisation and analytics tools against the real data with no model in the loop, so the agent only had to call verified tools correctly and surface their caveats rather than do the arithmetic itself.",
+    ],
+  },
+  {
+    n: "This Portfolio — Interactive 3D Space Experience",
+    t: "Sep 2026 — Present",
+    o: "Personal",
+    c: [],
+    tags: ["Next.js", "React Three Fiber", "WebGL", "GLSL", "TypeScript"],
+    b: [
+      "Built a single WebGL scene the whole page flies through — a draggable spiral galaxy, then the solar system in orbital order — with every body generated procedurally in shader code rather than loaded from model or texture files.",
+      "Added a device-tier quality scaler with a live frame watchdog that scales particle counts, sphere tessellation and resolution to hold 60fps from desktop GPUs down to phones.",
     ],
   },
   {

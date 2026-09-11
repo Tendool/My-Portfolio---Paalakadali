@@ -249,7 +249,7 @@ export default function MissionFiles() {
             label="Project archive"
             title="Mission"
             accent="Files"
-            blurb="Thirteen case files. Scroll or swipe the rail — open any file for the full detail."
+            blurb="Every shipped project, end to end. Scroll or swipe the rail — open any file for the full detail."
             // Pinned, this whole section must fit one viewport, so the heading
             // gives back the space the cards need.
             className="lg:mb-6 lg:[&_h2]:text-[clamp(2.4rem,5.4vw,4.6rem)] lg:[&_p]:mt-4"

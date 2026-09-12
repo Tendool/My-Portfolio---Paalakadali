@@ -1,0 +1,27 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# This repo is a Next.js (App Router) app, not a static site: the 3D scene runs
+# client-side, but the app itself needs a Node process (`next start`), not a
+# static file server. Deploying via this Blueprint ("New +" → "Blueprint" in
+# the Render dashboard, pointed at this repo) removes any ambiguity about
+# that — Render reads this file and configures the service exactly as below,
+# rather than guessing from repo contents.
+#
+# If you instead create the service by hand ("New +" → "Web Service"), set:
+#   Runtime:        Node
+#   Build Command:  npm ci && npm run build
+#   Start Command:  npm start
+# and match the NODE_VERSION below (also pinned in .node-version).
+services:
+  - type: web
+    name: tendool-portfolio
+    env: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.1
+      - key: NODE_ENV
+        value: production

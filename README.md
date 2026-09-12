@@ -19,6 +19,29 @@ production `BUILD_ID` is present, so the dev incremental cache survives normal
 use. If you ever run `next build` **while** the dev server is live, restart the
 dev server afterwards.
 
+## Deploying on Render
+
+This is a Next.js server app (`next start`), not a static export — the repo
+root also used to hold a leftover copy of the old single-file `index.html`,
+which is exactly the kind of file a naive "is there an index.html?" static-site
+heuristic latches onto. It's been removed (the original lives on at
+`legacy/index.html`), and `render.yaml` makes the deploy target explicit
+either way:
+
+1. In Render: **New +** → **Blueprint** → point it at this repo. Render reads
+   `render.yaml` and configures the service for you — no manual settings.
+2. If you instead use **New +** → **Web Service**, set:
+   - **Runtime:** Node
+   - **Build Command:** `npm ci && npm run build`
+   - **Start Command:** `npm start`
+   - **Node version:** matches `.node-version` (`20.18.1`) / `engines.node`
+     in `package.json` (`>=20.9.0`) — Render reads either automatically.
+
+Render injects a `PORT` env var the app must bind to. Nothing to configure for
+that: `next start` reads `process.env.PORT` and binds `0.0.0.0` whenever no
+`-p`/`-H` flag is passed (verified straight from the installed Next.js CLI
+source, and by actually running `PORT=4173 npm run start` and curling it).
+
 ## Where things live
 
 | Path | Purpose |

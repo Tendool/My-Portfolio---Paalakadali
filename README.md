@@ -22,11 +22,10 @@ dev server afterwards.
 ## Deploying on Render
 
 This is a Next.js server app (`next start`), not a static export — the repo
-root also used to hold a leftover copy of the old single-file `index.html`,
-which is exactly the kind of file a naive "is there an index.html?" static-site
-heuristic latches onto. It's been removed (the original lives on at
-`legacy/index.html`), and `render.yaml` makes the deploy target explicit
-either way:
+used to also hold the old single-file v1 site (`index.html` at the root, and
+an archived copy at `legacy/index.html`), which is exactly the kind of file a
+naive "is there an index.html?" static-site heuristic latches onto. Both are
+gone now; `render.yaml` makes the deploy target explicit either way:
 
 1. In Render: **New +** → **Blueprint** → point it at this repo. Render reads
    `render.yaml` and configures the service for you — no manual settings.
@@ -99,6 +98,5 @@ the WebGL side.
 
 ## Notes
 
-- `legacy/index.html` is the previous single-file version, kept for reference.
 - All Three.js is behind `dynamic(..., { ssr: false })`; nothing WebGL runs on
   the server.

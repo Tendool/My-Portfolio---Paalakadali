@@ -40,23 +40,21 @@ function Segment({
 
 /* -------------------------------------------------------------- the hero */
 
-const NET = [4, 6, 6, 4];
-const NET_X = [-0.8, -0.27, 0.27, 0.8];
-const NET_GAP = 0.34;
-const DB_X = -2.0;
-const DB_LEVELS = [0.78, 0.47, 0.16];
-const PHONE = new THREE.Vector3(2.0, -0.32, 0.18);
-const PACKETS = 9;
-const TOKENS = 7;
-const SPIKES = 5;
-const HOP_TIME = 0.4;
-const CHAT = [
-  { y: 0.48, w: 0.42, right: true },
-  { y: 0.27, w: 0.52 },
-  { y: 0.12, w: 0.46 },
-  { y: -0.03, w: 0.5 },
-  { y: -0.18, w: 0.3 },
+const CARD_L = 3.3;
+const CARD_H = 1.3;
+const BOARD_H = CARD_H - 0.08;
+const FAN_X = [-1.05, 0, 1.05];
+const BLADES = 9;
+const DIE_X = -0.35;
+const VRAM: [number, number][] = [
+  [-1.1, -0.38],
+  [-1.1, 0],
+  [-1.1, 0.38],
+  [0.4, -0.38],
+  [0.4, 0],
+  [0.4, 0.38],
 ];
+const EXPLODE_PERIOD = 10;
 
 /** Every segment a → b drawn by one instanced, stretched unit cylinder. */
 function makeSegments(pairs: [THREE.Vector3, THREE.Vector3][], radius: number, material: THREE.Material) {
@@ -75,68 +73,83 @@ function makeSegments(pairs: [THREE.Vector3, THREE.Vector3][], radius: number, m
   return mesh;
 }
 
-const bezier = (out: THREE.Vector3, a: THREE.Vector3, c: THREE.Vector3, b: THREE.Vector3, t: number) => {
-  const s = 1 - t;
-  return out.set(
-    s * s * a.x + 2 * s * t * c.x + t * t * b.x,
-    s * s * a.y + 2 * s * t * c.y + t * t * b.y,
-    s * s * a.z + 2 * s * t * c.z + t * t * b.z,
-  );
-};
+/** 0 = assembled, 1 = fully exploded. Rests assembled, lifts apart, holds, settles. */
+function explodeAt(t: number) {
+  const p = t % EXPLODE_PERIOD;
+  const ease = (x: number) => x * x * (3 - 2 * x);
+  if (p < 4.5) return 0;
+  if (p < 5.8) return ease((p - 4.5) / 1.3);
+  if (p < 8.7) return 1;
+  return 1 - ease((p - 8.7) / 1.3);
+}
 
 /**
- * The hero: the whole job in one drawing. Records stream out of a stack of
- * databases into a neural network, signals fire through its layers, and the
- * answer flies out as tokens into a phone, where a reply types itself out.
- * Drag it to turn it — it keeps the throw, then settles back to its resting
- * angle.
+ * The hero: a graphics card, drawn like a technical illustration. Every few
+ * seconds it lifts apart into an exploded view — shroud and fans, then the
+ * heatsink, then the board with the GPU die and its memory — and settles back
+ * together. Hover it and the fans spin up; drag it to turn it.
  */
-export function Pipeline({ host }: SceneProps) {
+export function Gpu({ host }: SceneProps) {
   const u = useFigure(host);
   const m = useMemo(
     () => ({
-      db: makeDither(u, 0.06),
-      node: makeDither(u, 0.12),
+      pcb: makeDither(u, -0.2),
+      plate: makeDither(u, 0.12),
+      part: makeDither(u, 0.02),
+      chip: makeDither(u, -0.32),
+      substrate: makeDither(u, 0.08),
+      die: makeDither(u, 0.34),
+      fin: makeDither(u, 0.14),
+      copper: makeDither(u, 0.06),
+      shroud: makeDither(u, 0.22),
+      hub: makeDither(u, -0.12),
+      blade: makeDither(u, 0.06, THREE.DoubleSide),
+      port: makeDither(u, -0.95),
       line: makeLine(u),
-      packet: makeDither(u, -0.15),
-      body: makeDither(u, 0.2),
-      screen: makeDither(u, -0.72),
-      bubble: makeDither(u, 0.8),
     }),
     [u],
   );
 
-  const nodes = useMemo(
-    () =>
-      NET.map((count, l) =>
-        Array.from({ length: count }, (_, j) => {
-          const z = (j % 2 === 0 ? 1 : -1) * 0.14 * (l % 2 === 0 ? 1 : -1);
-          return new THREE.Vector3(NET_X[l], (j - (count - 1) / 2) * NET_GAP, z);
-        }),
-      ),
-    [],
-  );
-  const edges = useMemo(() => {
+  // Heatsink fins: one instanced draw.
+  const fins = useMemo(() => {
+    const count = 46;
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.016, CARD_H - 0.22, 0.28), m.fin, count);
+    const mat = new THREE.Matrix4();
+    for (let i = 0; i < count; i++) mesh.setMatrixAt(i, mat.makeTranslation(-1.45 + (2.9 * i) / (count - 1), 0, 0.14));
+    mesh.frustumCulled = false;
+    return mesh;
+  }, [m.fin]);
+
+  // The die's surface: a fine grid, read as silicon.
+  const dieGrid = useMemo(() => {
     const pairs: [THREE.Vector3, THREE.Vector3][] = [];
-    for (let l = 0; l < nodes.length - 1; l++) for (const a of nodes[l]) for (const b of nodes[l + 1]) pairs.push([a, b]);
-    return makeSegments(pairs, 0.0065, m.line);
-  }, [nodes, m.line]);
+    const s = 0.27;
+    for (let i = 0; i < 5; i++) {
+      const k = -s + (2 * s * i) / 4;
+      pairs.push([new THREE.Vector3(-s, k, 0), new THREE.Vector3(s, k, 0)]);
+      pairs.push([new THREE.Vector3(k, -s, 0), new THREE.Vector3(k, s, 0)]);
+    }
+    return makeSegments(pairs, 0.0045, m.line);
+  }, [m.line]);
 
-  const nodeRefs = useRef<(THREE.Mesh | null)[][]>(NET.map(() => []));
-  const fired = useRef<number[][]>(NET.map((c) => Array(c).fill(-10)));
-  const packetRefs = useRef<(THREE.Mesh | null)[]>([]);
-  const tokenRefs = useRef<(THREE.Mesh | null)[]>([]);
-  const spikeRefs = useRef<(THREE.Mesh | null)[]>([]);
-  const bubbleRefs = useRef<(THREE.Mesh | null)[]>([]);
-
-  // Random choices are re-rolled each time an item starts a new trip.
-  const packetRoute = useRef(Array.from({ length: PACKETS }, () => ({ lap: -1, from: 0, to: 0 })));
-  const tokenRoute = useRef(Array.from({ length: TOKENS }, () => ({ lap: -1, from: 0, y: 0 })));
-  const spikeRoute = useRef(Array.from({ length: SPIKES }, () => ({ lap: -1, path: [0, 0, 0, 0] })));
-  const tmp = useMemo(() => ({ a: new THREE.Vector3(), b: new THREE.Vector3(), c: new THREE.Vector3() }), []);
+  // PCIe gold fingers, with the key notch.
+  const pins = useMemo(() => {
+    const pairs: [THREE.Vector3, THREE.Vector3][] = [];
+    for (let i = 0; i < 24; i++) {
+      if (i === 6) continue;
+      const x = -0.69 + i * 0.06;
+      pairs.push([new THREE.Vector3(x, -0.045, 0), new THREE.Vector3(x, 0.035, 0)]);
+    }
+    return makeSegments(pairs, 0.009, m.line);
+  }, [m.line]);
 
   const drag = useRef<THREE.Group>(null);
   const sway = useRef<THREE.Group>(null);
+  const backplate = useRef<THREE.Group>(null);
+  const heatsink = useRef<THREE.Group>(null);
+  const shroud = useRef<THREE.Group>(null);
+  const rotors = useRef<(THREE.Group | null)[]>([]);
+  const fanAngle = useRef(0);
   const spin = useRef({ dragging: false, lx: 0, ly: 0, px: 0, py: 0, vx: 0, vy: 0, released: -10 });
   const rest = useMemo(() => new THREE.Quaternion(), []);
 
@@ -177,7 +190,7 @@ export function Pipeline({ host }: SceneProps) {
 
   useFrame((state, delta) => {
     const still = reducedMotion();
-    const t = still ? 3.1 : state.clock.elapsedTime;
+    const t = state.clock.elapsedTime;
     const dt = Math.min(delta, 1 / 20);
 
     // ---- turning: drag with inertia, then settle back
@@ -199,183 +212,153 @@ export function Pipeline({ host }: SceneProps) {
         if (performance.now() / 1000 - s.released > 1.4) g.quaternion.slerp(rest, 1 - Math.exp(-dt * 1.2));
       }
     }
-    if (sway.current && !still) {
-      sway.current.rotation.y = -0.55 + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
-      sway.current.rotation.x = 0.32 + Math.sin(state.clock.elapsedTime * 0.15) * 0.04;
-    }
+    if (sway.current && !still) sway.current.rotation.y = 0.5 + Math.sin(t * 0.2) * 0.14;
 
-    // ---- records: database → input layer
-    packetRefs.current.forEach((p, k) => {
-      if (!p) return;
-      const phase = t * 0.32 + k / PACKETS;
-      const lap = Math.floor(phase);
-      const f = phase - lap;
-      const r = packetRoute.current[k];
-      if (r.lap !== lap) {
-        r.lap = lap;
-        r.from = Math.floor(Math.random() * DB_LEVELS.length);
-        r.to = Math.floor(Math.random() * NET[0]);
-      }
-      tmp.a.set(DB_X + 0.52, DB_LEVELS[r.from], 0);
-      tmp.b.copy(nodes[0][r.to]);
-      tmp.c.copy(tmp.a).add(tmp.b).multiplyScalar(0.5).add(Y);
-      tmp.c.y = Math.max(tmp.a.y, tmp.b.y) + 0.25;
-      bezier(p.position, tmp.a, tmp.c, tmp.b, f);
-      p.rotation.set(t * 1.3 + k, t * 0.9 + k, 0);
-      if (f > 0.94) fired.current[0][r.to] = t;
-    });
+    // ---- exploded view. The first lift comes about two seconds in.
+    const e = still ? 0 : explodeAt(t + 2.5);
+    if (backplate.current) backplate.current.position.z = -0.3 * e;
+    if (heatsink.current) heatsink.current.position.z = 0.62 * e;
+    if (shroud.current) shroud.current.position.z = 1.25 * e;
+    // Re-centre while apart: the stack grows up and to the right.
+    if (g) g.position.set(-0.2 * e, -0.32 * e, 0);
 
-    // ---- signals through the network
-    spikeRefs.current.forEach((spike, k) => {
-      if (!spike) return;
-      const local = t / HOP_TIME + (k * NET.length) / SPIKES;
-      const lap = Math.floor(local / NET.length);
-      const step = Math.floor(local % NET.length);
-      const f = local % 1;
-      const r = spikeRoute.current[k];
-      if (r.lap !== lap) {
-        r.lap = lap;
-        r.path = NET.map((c) => Math.floor(Math.random() * c));
-      }
-      if (step >= NET.length - 1) {
-        spike.visible = false;
-        return;
-      }
-      spike.visible = true;
-      spike.position.lerpVectors(nodes[step][r.path[step]], nodes[step + 1][r.path[step + 1]], f);
-      if (f > 0.92) fired.current[step + 1][r.path[step + 1]] = t;
-    });
-
-    // ---- answer: output layer → phone
-    tokenRefs.current.forEach((p, k) => {
-      if (!p) return;
-      const phase = t * 0.42 + k / TOKENS;
-      const lap = Math.floor(phase);
-      const f = phase - lap;
-      const r = tokenRoute.current[k];
-      if (r.lap !== lap) {
-        r.lap = lap;
-        r.from = Math.floor(Math.random() * NET[NET.length - 1]);
-        r.y = (Math.random() - 0.5) * 0.6;
-      }
-      tmp.a.copy(nodes[NET.length - 1][r.from]);
-      tmp.b.set(PHONE.x - 0.46, PHONE.y + r.y, PHONE.z);
-      tmp.c.copy(tmp.a).add(tmp.b).multiplyScalar(0.5);
-      tmp.c.y += 0.3;
-      bezier(p.position, tmp.a, tmp.c, tmp.b, f);
-      p.scale.setScalar(f > 0.9 ? (1 - f) * 10 : 1);
-    });
-
-    nodeRefs.current.forEach((layer, l) =>
-      layer.forEach((node, j) => {
-        if (!node) return;
-        const since = t - fired.current[l][j];
-        node.scale.setScalar(1 + 0.45 * Math.exp(-since * 5) * (since >= 0 ? 1 : 0));
-      }),
-    );
-
-    // ---- the reply types itself out on the phone, then clears
-    const cycle = t % 7;
-    bubbleRefs.current.forEach((b, i) => {
-      if (!b) return;
-      const start = i === 0 ? 0.2 : 1.1 + (i - 1) * 1.05;
-      const grow = THREE.MathUtils.clamp((cycle - start) / (i === 0 ? 0.3 : 0.95), 0, 1);
-      const clear = cycle > 6.4 ? 1 - (cycle - 6.4) / 0.6 : 1;
-      const w = CHAT[i].w * grow * clear;
-      b.visible = w > 0.005;
-      b.scale.x = Math.max(w, 0.001);
-      b.position.x = CHAT[i].right ? 0.29 - w / 2 : -0.29 + w / 2;
+    // ---- fans: idle, and under load while the card is hovered
+    if (!still) fanAngle.current += dt * (4.5 + 11 * u.uHot.value);
+    rotors.current.forEach((r, i) => {
+      if (r) r.rotation.z = fanAngle.current + i * 0.7;
     });
   });
 
+  const boardTop = -0.065;
+
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0, 7.8]} fov={32} />
-      <group ref={drag} position={[-0.12, 0, 0]}>
-        <group ref={sway} rotation={[0.32, -0.55, 0]}>
-          {/* data */}
-          {DB_LEVELS.map((y, i) => (
-            <group key={i} position={[DB_X, y, 0]}>
-              <mesh material={m.db}>
-                <cylinderGeometry args={[0.52, 0.52, 0.25, 56]} />
-              </mesh>
-              <mesh position={[0, 0.125, 0]} rotation={[Math.PI / 2, 0, 0]} material={m.line}>
-                <torusGeometry args={[0.52, 0.012, 6, 96]} />
+      <PerspectiveCamera makeDefault position={[0, 0.1, 6.6]} fov={32} />
+      <group ref={drag}>
+        <group ref={sway} rotation={[0, 0.5, 0]}>
+          {/* Lay the card flat, fans up, seen from above at an angle. */}
+          <group rotation={[-0.86, 0, 0]}>
+            {/* backplate */}
+            <group ref={backplate}>
+              <mesh position={[0, 0, -0.13]} material={m.plate}>
+                <boxGeometry args={[CARD_L - 0.06, CARD_H - 0.04, 0.03]} />
               </mesh>
             </group>
-          ))}
-          {Array.from({ length: PACKETS }, (_, k) => (
-            <mesh
-              key={k}
-              ref={(el) => {
-                packetRefs.current[k] = el;
-              }}
-              material={m.packet}
-            >
-              <boxGeometry args={[0.1, 0.1, 0.1]} />
-            </mesh>
-          ))}
 
-          {/* model */}
-          <primitive object={edges} />
-          {nodes.map((layer, l) =>
-            layer.map((p, j) => (
-              <mesh
-                key={`${l}-${j}`}
-                ref={(el) => {
-                  nodeRefs.current[l][j] = el;
-                }}
-                position={p}
-                material={m.node}
-              >
-                <sphereGeometry args={[0.105, 32, 24]} />
-              </mesh>
-            )),
-          )}
-          {Array.from({ length: SPIKES }, (_, k) => (
-            <mesh
-              key={k}
-              ref={(el) => {
-                spikeRefs.current[k] = el;
-              }}
-              material={m.line}
-            >
-              <sphereGeometry args={[0.045, 12, 10]} />
+            {/* board */}
+            <mesh position={[0, 0, -0.085]} material={m.pcb}>
+              <boxGeometry args={[CARD_L - 0.12, BOARD_H, 0.04]} />
             </mesh>
-          ))}
+            <mesh position={[-0.0, -BOARD_H / 2 - 0.06, -0.085]} material={m.copper}>
+              <boxGeometry args={[1.48, 0.12, 0.035]} />
+            </mesh>
+            <primitive object={pins} position={[0, -BOARD_H / 2 - 0.06, -0.066]} />
 
-          {/* answer */}
-          {Array.from({ length: TOKENS }, (_, k) => (
-            <mesh
-              key={k}
-              ref={(el) => {
-                tokenRefs.current[k] = el;
-              }}
-              material={m.line}
-            >
-              <sphereGeometry args={[0.04, 12, 10]} />
+            <mesh position={[DIE_X, 0, boardTop + 0.0125]} material={m.substrate}>
+              <boxGeometry args={[0.9, 0.9, 0.025]} />
             </mesh>
-          ))}
+            <mesh position={[DIE_X, 0, boardTop + 0.045]} material={m.die}>
+              <boxGeometry args={[0.58, 0.58, 0.04]} />
+            </mesh>
+            <primitive object={dieGrid} position={[DIE_X, 0, boardTop + 0.066]} />
 
-          {/* device */}
-          <group position={PHONE} rotation={[0, 0.42, 0]}>
-            <RoundedBox args={[0.84, 1.6, 0.11]} radius={0.09} smoothness={4} material={m.body} />
-            <mesh position={[0, 0, 0.056]} material={m.screen}>
-              <boxGeometry args={[0.7, 1.38, 0.01]} />
-            </mesh>
-            {CHAT.map((c, i) => (
-              <mesh
-                key={i}
-                ref={(el) => {
-                  bubbleRefs.current[i] = el;
-                }}
-                position={[0, c.y, 0.066]}
-                material={m.bubble}
-                visible={false}
-              >
-                <boxGeometry args={[1, i === 0 ? 0.11 : 0.075, 0.012]} />
+            {VRAM.map(([x, y], i) => (
+              <mesh key={i} position={[x, y, boardTop + 0.015]} material={m.chip}>
+                <boxGeometry args={[0.2, 0.26, 0.03]} />
               </mesh>
             ))}
+            {Array.from({ length: 8 }, (_, i) => (
+              <mesh key={`vrm${i}`} position={[0.78 + i * 0.095, 0.34, boardTop + 0.045]} material={m.part}>
+                <boxGeometry args={[0.08, 0.1, 0.09]} />
+              </mesh>
+            ))}
+            {Array.from({ length: 6 }, (_, i) => (
+              <mesh
+                key={`choke${i}`}
+                position={[0.8 + i * 0.12, -0.04, boardTop + 0.04]}
+                rotation={[Math.PI / 2, 0, 0]}
+                material={m.part}
+              >
+                <cylinderGeometry args={[0.05, 0.05, 0.08, 20]} />
+              </mesh>
+            ))}
+            {Array.from({ length: 5 }, (_, i) => (
+              <mesh
+                key={`cap${i}`}
+                position={[0.84 + i * 0.14, -0.36, boardTop + 0.055]}
+                rotation={[Math.PI / 2, 0, 0]}
+                material={m.copper}
+              >
+                <cylinderGeometry args={[0.04, 0.04, 0.11, 20]} />
+              </mesh>
+            ))}
+            <mesh position={[1.18, BOARD_H / 2 - 0.1, boardTop + 0.09]} material={m.chip}>
+              <boxGeometry args={[0.4, 0.14, 0.18]} />
+            </mesh>
+
+            {/* I/O bracket with its ports */}
+            <mesh position={[-CARD_L / 2 - 0.015, 0, 0.13]} material={m.plate}>
+              <boxGeometry args={[0.025, CARD_H + 0.12, 0.52]} />
+            </mesh>
+            {[-0.42, -0.15, 0.12, 0.39].map((y, i) => (
+              <mesh key={`port${i}`} position={[-CARD_L / 2 - 0.03, y, 0.02]} material={m.port}>
+                <boxGeometry args={[0.012, 0.19, 0.08]} />
+              </mesh>
+            ))}
+            {[-0.4, -0.24, -0.08, 0.08, 0.24, 0.4].map((y, i) => (
+              <mesh key={`vent${i}`} position={[-CARD_L / 2 - 0.03, y, 0.24]} material={m.port}>
+                <boxGeometry args={[0.012, 0.1, 0.03]} />
+              </mesh>
+            ))}
+
+            {/* heatsink */}
+            <group ref={heatsink}>
+              <primitive object={fins} />
+              <mesh position={[DIE_X, 0, 0.016]} material={m.copper}>
+                <boxGeometry args={[0.76, 0.76, 0.03]} />
+              </mesh>
+              {[-0.75, -0.35, 0.05].map((x, i) => (
+                <mesh
+                  key={`pipe${i}`}
+                  position={[x, CARD_H / 2 - 0.1, 0.12]}
+                  rotation={[0, Math.PI / 2, 0]}
+                  material={m.copper}
+                >
+                  <torusGeometry args={[0.16, 0.03, 10, 24, Math.PI]} />
+                </mesh>
+              ))}
+            </group>
+
+            {/* shroud and fans */}
+            <group ref={shroud}>
+              <RoundedBox args={[CARD_L, CARD_H - 0.02, 0.1]} radius={0.04} smoothness={3} position={[0, 0, 0.33]} material={m.shroud} />
+              <mesh position={[0, CARD_H / 2 - 0.085, 0.385]} material={m.line}>
+                <boxGeometry args={[CARD_L * 0.86, 0.022, 0.01]} />
+              </mesh>
+              {FAN_X.map((x, i) => (
+                <group key={`fan${i}`} position={[x, -0.03, 0.4]}>
+                  <mesh material={m.line}>
+                    <torusGeometry args={[0.47, 0.024, 8, 96]} />
+                  </mesh>
+                  <group
+                    ref={(el) => {
+                      rotors.current[i] = el;
+                    }}
+                  >
+                    <mesh rotation={[Math.PI / 2, 0, 0]} material={m.hub}>
+                      <cylinderGeometry args={[0.14, 0.14, 0.06, 32]} />
+                    </mesh>
+                    {Array.from({ length: BLADES }, (_, b) => (
+                      <group key={b} rotation={[0, 0, (b / BLADES) * Math.PI * 2]}>
+                        <mesh position={[0.29, 0, 0]} rotation={[0.55, 0, 0.2]} material={m.blade}>
+                          <boxGeometry args={[0.3, 0.13, 0.012]} />
+                        </mesh>
+                      </group>
+                    ))}
+                  </group>
+                </group>
+              ))}
+            </group>
           </group>
         </group>
       </group>

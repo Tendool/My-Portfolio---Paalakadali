@@ -49,7 +49,7 @@ source, and by actually running `PORT=4173 npm run start` and curling it).
 | `app/page.tsx` | Section order, and the check that decides whether the photographs section appears. |
 | `app/globals.css` | Theme tokens (light and dark), the figure inks, and the few shared styles. |
 | `components/figures/dither.ts` | The one shader every figure uses, plus the cursor-following light. |
-| `components/figures/scenes.tsx` | The drawings: the data → model → device pipeline (hero), agent graph, voice ring, staircase, eye, Bloch sphere, pills. |
+| `components/figures/scenes.tsx` | The drawings: the GPU (hero), agent graph, voice ring, staircase, eye, Bloch sphere, pills. |
 | `components/figures/Backdrop.tsx` | The animated dot-grid page background. |
 | `components/figures/Stage.tsx` | The single fixed canvas that draws the background and every figure. |
 | `components/Portrait.tsx` | The two-ink portrait, dithered on a 2D canvas from `public/assets/profile.png`. |
@@ -87,10 +87,11 @@ Each figure is a small three.js scene drawn in two inks with an 8×8 ordered
   is relative to that figure, so everything on screen shares one moving lamp.
   On touch screens the light drifts on its own.
 - **Hover a project** and its figure re-inks in the accent.
-- **The hero is the whole job in one drawing**: records stream out of a stack
-  of databases into a neural network, signals fire through its layers, and the
-  answer flies out as tokens into a phone where a reply types itself out. Drag
-  it to turn it; it keeps the throw, then settles back to its resting angle.
+- **The hero is a graphics card** drawn like a technical illustration. Every
+  few seconds it lifts apart into an exploded view — shroud and fans, heatsink,
+  then the board with the GPU die and memory — and settles back together.
+  Hovering spins the fans up; drag it to turn it, and it settles back to its
+  resting angle.
 
 Everything is built from primitives in code — there are no model or texture
 files. With `prefers-reduced-motion` the figures and the background wave hold

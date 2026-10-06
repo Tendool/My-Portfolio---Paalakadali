@@ -3,9 +3,9 @@
 import type { RefObject } from 'react';
 import { View } from '@react-three/drei';
 import type { FigureKind } from '@/lib/data';
-import { Agents, Bloch, Eye, Pills, Pipeline, Steps, Voice } from './scenes';
+import { Agents, Bloch, Eye, Gpu, Pills, Steps, Voice } from './scenes';
 
-const SCENES = { pipeline: Pipeline, agents: Agents, voice: Voice, steps: Steps, eye: Eye, bloch: Bloch, pills: Pills };
+const SCENES = { gpu: Gpu, agents: Agents, voice: Voice, steps: Steps, eye: Eye, bloch: Bloch, pills: Pills };
 
 /**
  * The DOM half of a figure. drei's View renders this box into the page and

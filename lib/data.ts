@@ -357,7 +357,7 @@ export const FILTERS: [Category | "all", string][] = [
 ];
 
 /** Which drawing each featured project gets. See components/figures/scenes. */
-export type FigureKind = "pipeline" | "agents" | "voice" | "steps" | "eye" | "bloch" | "pills";
+export type FigureKind = "gpu" | "agents" | "voice" | "steps" | "eye" | "bloch" | "pills";
 
 /**
  * The projects given a full spread. `fact` is the one number or claim a

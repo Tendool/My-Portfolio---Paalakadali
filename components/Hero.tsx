@@ -47,12 +47,14 @@ export default function Hero() {
             </div>
           </div>
 
-          <Figure
-            kind="pipeline"
-            label="Data streams out of a stack of databases into a neural network, signals fire through its layers, and the answer flies into a phone where a reply types itself out. Drag it to turn it."
-            className="fade-in lg:col-span-6 lg:-mr-4"
-            slotClassName="aspect-[6/5] cursor-grab touch-pan-y select-none data-[dragging]:cursor-grabbing"
-          />
+          {/* data-figure-card: hovering re-inks the card in the accent and spins its fans up. */}
+          <div data-figure-card className="fade-in lg:col-span-6 lg:-mr-4">
+            <Figure
+              kind="gpu"
+              label="A graphics card drawn in dither dots. Every few seconds it lifts apart into an exploded view — shroud and fans, heatsink, then the board with the GPU die and memory — and settles back together. Drag it to turn it."
+              slotClassName="aspect-[6/5] cursor-grab touch-pan-y select-none data-[dragging]:cursor-grabbing"
+            />
+          </div>
         </div>
 
         <dl className="fade-in grid grid-cols-2 gap-x-6 gap-y-6 border-t border-rule py-6 text-[.95rem] md:grid-cols-4" style={d(0.9)}>

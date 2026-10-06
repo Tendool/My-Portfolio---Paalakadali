@@ -1,141 +1,107 @@
 /**
  * Single source of truth for every piece of copy on the site.
- * Content is carried over verbatim from the v1 portfolio — client work stays
- * labelled by capability only, with no internal project names.
+ * Client work stays labelled by capability only — no internal project names.
  */
 
 export const PROFILE = {
-  first: "SALA",
-  middle: "TENDOOL",
-  last: "SRIVATSAV",
+  first: "Sala",
+  middle: "Tendool",
+  last: "Srivatsav",
   full: "Sala Tendool Srivatsav",
-  role: "AI/ML Engineer — Agentic Systems & Applied Deep Learning",
-  status: "Available for AI/ML roles · 2027",
-  badge: "AI Intern · Yitro Global",
+  role: "AI/ML & Data Engineer",
   email: "tendoolsrivatsav@gmail.com",
   phones: ["+91 93964 66665", "+91 94916 66665"],
   tels: ["+919396466665", "+919491666665"],
-  location: ["Bobbili, Vizianagaram", "Andhra Pradesh, India"],
+  location: { town: "Bobbili, Vizianagaram", region: "Andhra Pradesh, India" },
+  timeZone: "Asia/Kolkata",
   github: "https://github.com/Tendool",
   linkedin: "https://www.linkedin.com/in/sala-tendool-srivatsav/",
-  stats: [
-    { v: "17", l: "Projects Shipped" },
-    { v: "6", l: "Domains" },
-  ],
 };
 
-export type RosterEntry = {
-  code: string;
-  spec: string;
-  tags: string[];
-  impact: string;
-  flag: string;
-  glyph: string;
-};
-
-export const ROSTER: RosterEntry[] = [
+/** Areas of focus, each tied to the work that backs it up. */
+export const FOCUS = [
   {
-    code: "Agent Commander",
-    spec: "Agentic AI & LLM Systems",
-    tags: ["RAG", "Fine-Tuning", "Multi-Agent", "Python"],
+    title: "Agentic AI & LLM systems",
     impact:
-      "Multi-agent + RAG architecture grounded in company HR policy data, reducing manual ticket resolution time.",
-    flag: "Agentic HR resolution, adaptive tutoring & multi-agent orchestration systems (client work)",
-    glyph:
-      '<circle cx="12" cy="12" r="2.6"/><circle cx="4.5" cy="5.5" r="1.9"/><circle cx="19.5" cy="5.5" r="1.9"/><circle cx="4.5" cy="18.5" r="1.9"/><circle cx="19.5" cy="18.5" r="1.9"/><path d="M12 9.4V7.4M13.9 10.4l3.9-3.2M10.1 10.4L6.2 7.2M13.9 13.6l3.9 3.2M10.1 13.6l-3.9 3.2"/>',
+      "Multi-agent and RAG architectures grounded in an organisation’s own documents, so answers come from policy rather than guesswork.",
+    flagship: "HR query resolution, adaptive tutoring, multi-agent orchestration",
   },
   {
-    code: "Vision Specialist",
-    spec: "Computer Vision & Robotics",
-    tags: ["OpenCV", "ASR", "Jetson Nano", "Deep Learning"],
+    title: "Computer vision & robotics",
     impact:
-      "Real-time obstacle detection and voice guidance from a phone camera alone — no external hardware.",
-    flag: "SmartSight · Fire Fighting Robot · Robotic Hand",
-    glyph:
-      '<path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/>',
+      "Real-time detection on small hardware — a phone camera, a Raspberry Pi, a Jetson Nano — with speech in and out.",
+    flagship: "SmartSight, Fire Fighting Robot, Robotic Hand",
   },
   {
-    code: "Quantum Strategist",
-    spec: "Quantum Machine Learning",
-    tags: ["Qiskit", "QNN", "VQC", "TensorFlow"],
+    title: "Quantum machine learning",
     impact:
-      "~87% prediction accuracy with improved recall and sensitivity vs. Random Forest, SVM and MLP baselines.",
-    flag: "Quantum ML for Multimodal Disease Prediction",
-    glyph:
-      '<ellipse cx="12" cy="12" rx="9.5" ry="3.6"/><ellipse cx="12" cy="12" rx="9.5" ry="3.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="3.6" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>',
+      "Quantum neural networks and variational classifiers benchmarked honestly against classical baselines.",
+    flagship: "Multimodal disease prediction",
   },
   {
-    code: "Data Sentinel",
-    spec: "Big Data & Cloud Systems",
-    tags: ["AWS", "HDFS", "Hadoop", "Spark"],
+    title: "Data engineering & big data",
     impact:
-      "Distributed HDFS pipeline processing prescription data at scale, flagging unsafe drug combinations in real time.",
-    flag: "Real-Time Prescription Validation & Drug Interaction Warnings",
-    glyph:
-      '<ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+      "Distributed HDFS pipelines that process prescription data at scale, and cleaning and analytics tools tested against the real data before any model is allowed near it.",
+    flagship: "Prescription validation, BI agent over live board data",
   },
   {
-    code: "Sustainability Engineer",
-    spec: "Applied ML — Energy & Agriculture",
-    tags: ["Predictive ML", "Energy Systems", "AWS"],
+    title: "Applied ML for energy & agriculture",
     impact:
-      "Predictive pipelines and intelligent energy management optimising green hydrogen cell efficiency.",
-    flag: "SOEC Green Hydrogen Optimisation · AgriX Farming App",
-    glyph:
-      '<path d="M12 2.5c3.4 4.6 5.6 7.9 5.6 11a5.6 5.6 0 11-11.2 0c0-3.1 2.2-6.4 5.6-11z"/><path d="M12 21.5v-4.5"/>',
+      "Predictive models for green-hydrogen electrolysis cells, and crop-disease identification from field photos.",
+    flagship: "SOEC optimisation, AgriX",
   },
   {
-    code: "Enterprise Architect",
-    spec: "CRM & Talent-Matching Systems",
-    tags: ["Graph DB", "Multi-Agent", "LLM Chatbots"],
+    title: "Enterprise systems",
     impact:
-      "Graph-based clan clustering surfacing optimal candidate-role fits for recruiters.",
-    flag: "Yitro Global — Talent Network · End-to-End CRM",
-    glyph:
-      '<rect x="9" y="2.5" width="6" height="5.5" rx="1"/><rect x="2.5" y="16" width="6" height="5.5" rx="1"/><rect x="15.5" y="16" width="6" height="5.5" rx="1"/><path d="M12 8v4M5.5 16v-2.5h13V16"/>',
+      "Graph-based clan clustering that surfaces candidate-to-role fits, and LLM chatbots that agentize CRM workflows end to end.",
+    flagship: "Agentic CRM, talent-matching network, recruiter matching app",
   },
 ];
 
 /**
- * Skill-based summaries of Yitro Global work — deliberately generic:
- * no product/project names, per client confidentiality.
+ * Yitro Global work, as on the resume. Client work is described by what it
+ * does — internal product names are left out.
  */
 export const TIMELINE = [
   {
-    t: "Small Language Models & Real-Time Voice Agents",
-    d: "Worked hands-on with Small Language Model (SLM) deployment for real-time, low-latency interaction — including agent-driven conversational interfaces, dynamic content generation, and Text-to-Speech integration.",
+    t: "SLM-driven tutoring application",
+    d: "Engineered an AI tutoring application driven by a small language model, with an interactive agent avatar delivering real-time explanations, quizzes and hands-on coding feedback — alongside a teacher-facing analytics and classroom-management dashboard.",
   },
   {
-    t: "Graph Databases for Multi-Agent Systems",
-    d: "Applied graph database design to power multi-agent architectures, structuring relationship-rich data for agent-based retrieval and matching use cases.",
+    t: "Enterprise talent-matching network",
+    d: "Architected a talent-matching network on graph databases and multi-agent orchestration, helping recruiters find the best candidate-to-role fits through clan-based clustering.",
   },
   {
-    t: "LLM-Driven Conversational Automation",
-    d: "Built LLM-powered chatbots to automate workflows within enterprise platforms, translating conversational input into structured actions and data updates.",
+    t: "Agentic CRM platform",
+    d: "Built an end-to-end CRM platform and designed LLM-driven chatbots that agentize its workflows, automating lead management and customer interactions.",
   },
   {
-    t: "Graph-Based Matching & Clustering",
-    d: "Designed clustering-based matching logic over graph-structured data to surface relevant connections between entities at scale.",
+    t: "Recruiter–job seeker matching app",
+    d: "Developed a recruiter–job seeker matching application that uses graph-based clan clustering to improve candidate discovery and engagement.",
   },
   {
-    t: "Multi-Agent Orchestration for Enterprise Retrieval",
-    d: "Composed multi-agent pipelines — combining knowledge retrieval, structured data extraction, and voice-based interaction agents — to automate enterprise information workflows.",
+    t: "Multi-agent enterprise retrieval",
+    d: "Designed a multi-agent system — a knowledge-based search agent, a data extraction agent and a voice agent — to automate enterprise information retrieval and query resolution.",
   },
 ];
 
 export const ROLE = {
   org: "Yitro Global",
-  title: "AI Intern · AI Algorithms for Enterprise Systems",
-  span: "Sep 2025 — Present",
+  title: "AI Intern",
+  team: "AI Algorithms for Enterprise Systems",
+  span: "Sep 2025 — present",
   mode: "Remote",
-  event: { label: "Event Log", detail: "NVIDIA RTX AI PC Day · Jan 2026" },
+  event: "NVIDIA RTX AI PC Day, Jan 2026",
 };
 
+export type Category = "agentic" | "data" | "vision" | "healthcare" | "robotics" | "energy" | "quantum";
+
 export type Project = {
+  id: string;
   n: string;
   t: string;
   o: string;
-  c: string[];
+  c: Category[];
   conf?: boolean;
   tags: string[];
   b: string[];
@@ -143,7 +109,8 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    n: "Agentic HR Query Resolution System",
+    id: "agentic-hr",
+    n: "Agentic HR Query Resolution Platform",
     t: "Jan 2026 — Present",
     o: "Yitro Global",
     c: ["agentic"],
@@ -155,7 +122,8 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    n: "SmartSight: Vision-Based Wearable Guidance App",
+    id: "smartsight",
+    n: "SmartSight: Vision-Based Wearable Interactive Guidance App",
     t: "Nov 2025 — Present",
     o: "University",
     c: ["vision"],
@@ -166,18 +134,21 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    n: "SLM-Driven Adaptive Tutoring Agent",
+    id: "tutoring-agent",
+    n: "AI Tutor Agent — SLM-Driven Adaptive Tutoring",
     t: "Feb 2026 — Present",
     o: "Yitro Global",
     c: ["agentic"],
     conf: true,
     tags: ["SLM", "CUDA", "TTS", "RAG"],
     b: [
+      "An AI-powered tutoring application driven by a Small Language Model, with an interactive agent avatar delivering real-time explanations, quizzes and hands-on coding feedback, plus a teacher-facing analytics and classroom management dashboard.",
       "Built a self-paced learning agent that dynamically tailors content, pacing and difficulty to each learner’s progress using RAG-grounded content retrieval.",
       "Leveraged CUDA-accelerated inference and Text-to-Speech to deliver low-latency, voice-interactive tutoring sessions.",
     ],
   },
   {
+    id: "orchestration",
     n: "Multi-Agent Orchestration Platform",
     t: "Dec 2025 — Feb 2026",
     o: "Yitro Global",
@@ -189,6 +160,43 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "agentic-crm",
+    n: "Agentic CRM Platform",
+    t: "Sep 2025 — Present",
+    o: "Yitro Global",
+    c: ["agentic"],
+    conf: true,
+    tags: ["LLMs", "Chatbots", "Agentic AI", "CRM"],
+    b: [
+      "Built an end-to-end CRM platform and designed LLM-driven chatbots to agentize CRM workflows, automating lead management and customer interactions.",
+    ],
+  },
+  {
+    id: "talent-network",
+    n: "Enterprise Talent-Matching Network",
+    t: "Sep 2025 — Present",
+    o: "Yitro Global",
+    c: ["agentic", "data"],
+    conf: true,
+    tags: ["Graph DB", "Multi-Agent", "Clustering"],
+    b: [
+      "Architected an enterprise talent-matching network using graph databases and multi-agent orchestration, enabling recruiters to identify optimal candidate-role fits through clan-based clustering.",
+    ],
+  },
+  {
+    id: "recruiter-matching",
+    n: "Recruiter–Job Seeker Matching App",
+    t: "Sep 2025 — Present",
+    o: "Yitro Global",
+    c: ["data"],
+    conf: true,
+    tags: ["Graph DB", "Clustering"],
+    b: [
+      "Developed a recruiter–job seeker matching application leveraging graph-based clan clustering to improve candidate discovery and engagement.",
+    ],
+  },
+  {
+    id: "tara",
     n: "TARA — Fully Local Voice Assistant",
     t: "Sep 2026 — Present",
     o: "Personal",
@@ -200,20 +208,20 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "ojas",
     n: "OJAS — Personal Mobile Assistant",
     t: "Sep 2026 — Present",
     o: "Personal",
     c: ["agentic"],
     tags: ["Mobile", "Assistant"],
-    b: [
-      "A personal mobile assistant application, currently in active development.",
-    ],
+    b: ["A personal mobile assistant application, currently in active development."],
   },
   {
+    id: "bi-agent",
     n: "Business Intelligence Agent over Live Board Data",
     t: "Aug 2026",
     o: "Assessment",
-    c: ["agentic"],
+    c: ["agentic", "data"],
     tags: ["Python", "React", "Docker", "LLM Tool Use"],
     b: [
       "Built a conversational agent answering founder-level business questions from two live project-management boards, reconciling a client-code mismatch that turned out to be the real cross-board join key and discarding corrupted rows that would otherwise have silently broken every cross-board metric.",
@@ -221,18 +229,20 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    n: "This Portfolio — Interactive 3D Space Experience",
+    id: "portfolio",
+    n: "This Portfolio",
     t: "Sep 2026 — Present",
     o: "Personal",
     c: [],
-    tags: ["Next.js", "React Three Fiber", "WebGL", "GLSL", "TypeScript"],
+    tags: ["Next.js", "React Three Fiber", "GLSL", "TypeScript"],
     b: [
-      "Built a single WebGL scene the whole page flies through — a draggable spiral galaxy, then the solar system in orbital order — with every body generated procedurally in shader code rather than loaded from model or texture files.",
-      "Added a device-tier quality scaler with a live frame watchdog that scales particle counts, sphere tessellation and resolution to hold 60fps from desktop GPUs down to phones.",
+      "Designed and built this site: an editorial layout whose figures are live WebGL scenes, all drawn through a single shared canvas and shaded by one ordered-dither shader so they print like 1-bit illustrations.",
+      "Every figure is lit from wherever the cursor is, and is assembled from primitives in code — there are no model or texture files.",
     ],
   },
   {
-    n: "ML-Assisted Optimisation of Solid Oxide Electrolysis Cells",
+    id: "soec",
+    n: "ML-Assisted Optimisation of Solid Oxide Electrolysis Cells (Green Hydrogen)",
     t: "Nov 2025 — Present",
     o: "University",
     c: ["energy"],
@@ -242,6 +252,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "quantum",
     n: "Quantum ML for Multimodal Disease Prediction",
     t: "Jun 2025 — Oct 2025",
     o: "University",
@@ -253,10 +264,11 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    n: "Cloud & HDFS Big Data Analytics — Prescription Validation",
+    id: "hdfs",
+    n: "Cloud & HDFS Big Data Analytics — Real-Time Prescription Validation and Drug Interaction Warnings",
     t: "Jun 2025 — Oct 2025",
     o: "University",
-    c: ["healthcare"],
+    c: ["healthcare", "data"],
     tags: ["AWS", "Machine Learning", "HDFS", "Python"],
     b: [
       "Built a distributed big data pipeline on HDFS to process patient prescription data at scale.",
@@ -264,6 +276,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "agrix",
     n: "AI-Powered Farming Management App (AgriX)",
     t: "Dec 2024 — Apr 2025",
     o: "University",
@@ -271,10 +284,11 @@ export const PROJECTS: Project[] = [
     tags: ["Machine Learning", "AWS", "HTML", "Java", "CSS"],
     b: [
       "Developed a machine learning-based crop disease identification tool enabling farmers to diagnose plant health issues from images.",
-      "Built a marketplace module for agricultural machinery, and delivered personalised fertiliser and crop-care recommendations based on real-time crop and soil status.",
+      "Built a marketplace module for farmers to buy and sell agricultural machinery and equipment, and delivered personalised fertiliser and crop-care recommendations based on real-time crop and soil status.",
     ],
   },
   {
+    id: "drug-target",
     n: "Drug Target Identification using AI",
     t: "Aug 2023 — Feb 2024",
     o: "University",
@@ -285,6 +299,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "firebot",
     n: "Fire Fighting Robot",
     t: "Nov 2023 — Oct 2024",
     o: "University",
@@ -296,6 +311,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "self-driving",
     n: "Self-Driving Car — Lane Detection & Text Recognition",
     t: "Jun 2024 — Nov 2024",
     o: "University",
@@ -306,6 +322,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "robotic-hand",
     n: "Robotic Hand Mimicking User Hand Gestures",
     t: "Jun 2025 — Oct 2025",
     o: "University",
@@ -316,6 +333,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
+    id: "network-slicing",
     n: "Adaptive Traffic Management via Network Slicing",
     t: "Jun 2024 — Nov 2024",
     o: "University",
@@ -327,21 +345,108 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-export const FILTERS: [string, string][] = [
+export const FILTERS: [Category | "all", string][] = [
   ["all", "All"],
   ["agentic", "Agentic AI"],
-  ["vision", "Computer Vision"],
+  ["data", "Data"],
+  ["vision", "Vision"],
   ["healthcare", "Healthcare"],
   ["robotics", "Robotics"],
-  ["energy", "Energy"],
+  ["energy", "Energy & agri"],
   ["quantum", "Quantum"],
+];
+
+/** Which drawing each featured project gets. See components/figures/scenes. */
+export type FigureKind = "pipeline" | "agents" | "voice" | "steps" | "eye" | "bloch" | "pills";
+
+/**
+ * The projects given a full spread. `fact` is the one number or claim a
+ * reader should leave with; every fact is lifted from the project's own bullets.
+ */
+export const FEATURED: {
+  id: string;
+  title: string;
+  context: string;
+  span: string;
+  summary: string;
+  fact: { k: string; v: string };
+  figure: FigureKind;
+  /** Accessible description of the drawing. */
+  label: string;
+}[] = [
+  {
+    id: "agentic-hr",
+    title: "Agentic HR query resolution",
+    context: "Yitro Global · client work",
+    span: "2026 — now",
+    summary:
+      "Three cooperating agents — data extraction, knowledge search and voice analytics — answer employees’ HR questions, grounded in the company’s own policy documents through fine-tuning and retrieval-augmented generation.",
+    fact: { k: "3 agents", v: "one shared, policy-grounded knowledge base" },
+    figure: "agents",
+    label: "An orchestrator, three agents, and the policy documents they search.",
+  },
+  {
+    id: "tara",
+    title: "TARA, a voice assistant that never phones home",
+    context: "Personal",
+    span: "2026 — now",
+    summary:
+      "Wake word, speech-to-text, a local language model that can call tools, and speech synthesis — openWakeWord, faster-whisper, Qwen and Piper wired into one loop that runs entirely on the machine in front of you.",
+    fact: { k: "0", v: "cloud services anywhere in the loop" },
+    figure: "voice",
+    label: "Speech, drawn as a ring of levels around a local model.",
+  },
+  {
+    id: "tutoring-agent",
+    title: "SLM-driven adaptive tutoring agent",
+    context: "Yitro Global · client work",
+    span: "2026 — now",
+    summary:
+      "A self-paced learning agent that tailors what it teaches, how fast and how hard to each learner’s progress, grounded with retrieval-augmented generation — and talks the lesson through, using CUDA-accelerated inference and text-to-speech to keep the voice low-latency.",
+    fact: { k: "3", v: "things it adapts per learner: content, pacing and difficulty" },
+    figure: "steps",
+    label: "A staircase whose steps resize to suit whoever is climbing it.",
+  },
+  {
+    id: "smartsight",
+    title: "SmartSight, guidance from a phone camera",
+    context: "University",
+    span: "2025 — now",
+    summary:
+      "A navigation assistant for visually impaired users: real-time obstacle detection and spoken, hands-free guidance, using object detection and speech recognition on the phone they already carry.",
+    fact: { k: "1 camera", v: "the phone’s own — no external hardware" },
+    figure: "eye",
+    label: "An eye that tracks your cursor. SmartSight does the same for obstacles.",
+  },
+  {
+    id: "quantum",
+    title: "Quantum ML for multimodal disease prediction",
+    context: "University",
+    span: "2025",
+    summary:
+      "Quantum neural networks, variational quantum classifiers and hybrid classical–quantum models built in Qiskit and TensorFlow, then measured against the classical models a clinician would actually reach for.",
+    fact: { k: "~87%", v: "accuracy, with better recall than RF, SVM and MLP" },
+    figure: "bloch",
+    label: "A Bloch sphere: the state of one qubit, precessing.",
+  },
+  {
+    id: "hdfs",
+    title: "Prescription validation on HDFS",
+    context: "University",
+    span: "2025",
+    summary:
+      "A distributed big-data pipeline on HDFS that processes patient prescription data at scale, feeding a machine-learning validation engine that warns patients on several prescriptions about unsafe drug combinations.",
+    fact: { k: "Real-time", v: "flags for unsafe drug combinations" },
+    figure: "pills",
+    label: "Two prescriptions that should never meet, flagged the moment they do.",
+  },
 ];
 
 export type SkillTier = "core" | "prof" | "work";
 
 export const ARSENAL: { g: string; i: [string, SkillTier][] }[] = [
   {
-    g: "Languages & Frameworks",
+    g: "Languages & frameworks",
     i: [
       ["Python", "core"],
       ["PyTorch", "core"],
@@ -358,33 +463,35 @@ export const ARSENAL: { g: string; i: [string, SkillTier][] }[] = [
     ],
   },
   {
-    g: "LLM & Agentic AI",
+    g: "LLMs & agents",
     i: [
+      ["LLMs", "core"],
+      ["Agentic AI", "core"],
       ["RAG", "core"],
-      ["Multi-Agent Systems", "core"],
-      ["Fine-Tuning", "core"],
-      ["Prompt Engineering", "prof"],
-      ["SLM", "prof"],
-      ["TTS", "prof"],
-      ["ASR", "prof"],
+      ["Multi-agent systems", "core"],
+      ["Fine-tuning", "core"],
+      ["Prompt engineering", "prof"],
+      ["Small language models", "prof"],
+      ["Text-to-speech", "prof"],
+      ["Speech recognition", "prof"],
     ],
   },
   {
-    g: "ML / DL Domains",
+    g: "ML & DL",
     i: [
-      ["Deep Learning", "core"],
-      ["Machine Learning", "core"],
+      ["Deep learning", "core"],
+      ["Machine learning", "core"],
       ["NLP", "prof"],
       ["Transformers", "prof"],
       ["Generative AI", "prof"],
-      ["Data Analytics", "prof"],
-      ["Optimization", "prof"],
-      ["Reinforcement Learning", "work"],
+      ["Data analytics", "prof"],
+      ["Optimisation", "prof"],
+      ["Reinforcement learning", "work"],
       ["Quantum ML", "work"],
     ],
   },
   {
-    g: "Cloud & Big Data",
+    g: "Data engineering & cloud",
     i: [
       ["AWS", "prof"],
       ["HDFS", "prof"],
@@ -394,7 +501,7 @@ export const ARSENAL: { g: string; i: [string, SkillTier][] }[] = [
     ],
   },
   {
-    g: "Hardware & Robotics",
+    g: "Hardware & robotics",
     i: [
       ["Jetson Nano", "prof"],
       ["Raspberry Pi", "prof"],
@@ -403,141 +510,77 @@ export const ARSENAL: { g: string; i: [string, SkillTier][] }[] = [
     ],
   },
   {
-    g: "Engineering Practice",
+    g: "Engineering practice",
     i: [
-      ["Git / GitHub", "core"],
-      ["CI/CD Pipelines", "prof"],
-      ["DSA", "prof"],
+      ["Git & GitHub", "core"],
+      ["CI/CD pipelines", "prof"],
+      ["Data structures & algorithms", "prof"],
       ["OOP", "prof"],
       ["DevOps", "work"],
     ],
   },
 ];
 
-/** Flat list of everything in the arsenal, used to seed the 3D orbit. */
-export const ORBIT_NODES: { name: string; tier: SkillTier; group: string }[] =
-  ARSENAL.flatMap((a) =>
-    a.i.map(([name, tier]) => ({ name, tier, group: a.g })),
-  );
+export const TIERS: Record<SkillTier, { label: string; level: number }> = {
+  core: { label: "Daily driver", level: 3 },
+  prof: { label: "Proficient", level: 2 },
+  work: { label: "Working knowledge", level: 1 },
+};
 
 /**
- * ALBUM — drop a file into /public/assets/projects using the exact `f:` name
- * and the feed fills itself in. A missing file degrades to a NO SIGNAL panel.
- * Client work is labelled by capability only — no internal project names.
+ * Project photographs. Drop a file into /public/assets/projects using the
+ * exact `f` name and it appears on the page — entries without a file are left
+ * out entirely. Client work is labelled by capability only.
  */
 export const GALLERY = [
-  {
-    f: "agentic-hr-01.jpg",
-    cat: "agentic",
-    tag: "Agentic HR System",
-    cap: "Multi-agent HR query resolution — agent routing view",
-  },
-  {
-    f: "smartsight-01.jpg",
-    cat: "vision",
-    tag: "SmartSight",
-    cap: "Wearable navigation aid — live obstacle detection",
-  },
-  {
-    f: "tutoring-agent-01.jpg",
-    cat: "agentic",
-    tag: "Tutoring Agent",
-    cap: "SLM tutor with agent avatar and TTS playback",
-  },
-  {
-    f: "multi-agent-01.jpg",
-    cat: "agentic",
-    tag: "Agent Orchestration",
-    cap: "Knowledge, extraction and voice agents in orchestration",
-  },
-  {
-    f: "firebot-01.jpg",
-    cat: "robotics",
-    tag: "Fire Fighting Robot",
-    cap: "Autonomous fire-seeking rover with pump assembly",
-  },
-  {
-    f: "robotic-hand-01.jpg",
-    cat: "robotics",
-    tag: "Robotic Hand",
-    cap: "Gesture-mimicking robotic hand on Raspberry Pi",
-  },
-  {
-    f: "selfdriving-01.jpg",
-    cat: "robotics",
-    tag: "Self-Driving Car",
-    cap: "Lane detection and text recognition test run",
-  },
-  {
-    f: "quantum-01.jpg",
-    cat: "quantum",
-    tag: "Quantum ML",
-    cap: "QNN / VQC circuits — ~87% multimodal accuracy",
-  },
-  {
-    f: "soec-01.jpg",
-    cat: "energy",
-    tag: "SOEC Hydrogen",
-    cap: "Electrolysis cell optimisation — predictive pipeline",
-  },
-  {
-    f: "agrix-01.jpg",
-    cat: "energy",
-    tag: "AgriX",
-    cap: "Crop disease identification from field imagery",
-  },
-  {
-    f: "hdfs-01.jpg",
-    cat: "healthcare",
-    tag: "Prescription Validation",
-    cap: "HDFS pipeline flagging unsafe drug interactions",
-  },
-  {
-    f: "drug-target-01.jpg",
-    cat: "healthcare",
-    tag: "Drug Target ID",
-    cap: "Bioinformatics feature engineering results",
-  },
-];
-
-export const GAL_FILTERS: [string, string][] = [
-  ["all", "All"],
-  ["agentic", "Agentic AI"],
-  ["vision", "Vision"],
-  ["robotics", "Robotics"],
-  ["healthcare", "Healthcare"],
-  ["energy", "Energy"],
-  ["quantum", "Quantum"],
+  { f: "agentic-hr-01.jpg", tag: "Agentic HR system", cap: "Multi-agent HR query resolution — agent routing view" },
+  { f: "smartsight-01.jpg", tag: "SmartSight", cap: "Wearable navigation aid — live obstacle detection" },
+  { f: "tutoring-agent-01.jpg", tag: "Tutoring agent", cap: "SLM tutor with agent avatar and TTS playback" },
+  { f: "multi-agent-01.jpg", tag: "Agent orchestration", cap: "Knowledge, extraction and voice agents in orchestration" },
+  { f: "firebot-01.jpg", tag: "Fire Fighting Robot", cap: "Autonomous fire-seeking rover with pump assembly" },
+  { f: "robotic-hand-01.jpg", tag: "Robotic hand", cap: "Gesture-mimicking robotic hand on Raspberry Pi" },
+  { f: "selfdriving-01.jpg", tag: "Self-driving car", cap: "Lane detection and text recognition test run" },
+  { f: "quantum-01.jpg", tag: "Quantum ML", cap: "QNN / VQC circuits — ~87% multimodal accuracy" },
+  { f: "soec-01.jpg", tag: "SOEC hydrogen", cap: "Electrolysis cell optimisation — predictive pipeline" },
+  { f: "agrix-01.jpg", tag: "AgriX", cap: "Crop disease identification from field imagery" },
+  { f: "hdfs-01.jpg", tag: "Prescription validation", cap: "HDFS pipeline flagging unsafe drug interactions" },
+  { f: "drug-target-01.jpg", tag: "Drug target ID", cap: "Bioinformatics feature engineering results" },
 ];
 
 export const EDU = [
   {
     y: "2027",
     s: "ASE, Coimbatore",
-    d: "B.Tech · Artificial Intelligence and Data Science",
+    d: "B.Tech, Artificial Intelligence & Data Science",
     m: "CGPA 6.89 / 10",
     live: true,
   },
   {
     y: "2023",
     s: "Sri Viswa Junior College",
-    d: "Class XII · MPC · Board of Intermediate Education, AP",
+    d: "Class XII, MPC — Board of Intermediate Education, AP · Visakhapatnam",
     m: "93%",
   },
   {
     y: "2021",
-    s: "Swetha Chalapathi Samasthanam EM HS",
-    d: "Class X · Board of Secondary Education, AP · Bobbili",
+    s: "Swetha Chalapathi Samasthanam EM High School",
+    d: "Class X — Board of Secondary Education, AP, Bobbili",
     m: "97.6%",
   },
 ];
 
 export const NAV = [
-  { id: "hero", label: "Home" },
-  { id: "roster", label: "Roster" },
-  { id: "missions", label: "Mission Log" },
-  { id: "files", label: "Mission Files" },
-  { id: "gallery", label: "Album" },
-  { id: "arsenal", label: "Arsenal" },
-  { id: "origin", label: "Origin" },
+  { id: "work", label: "Work" },
+  { id: "experience", label: "Experience" },
+  { id: "index", label: "Index" },
+  { id: "about", label: "About" },
+  { id: "contact", label: "Contact" },
 ];
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "Nov 2025 — Present" → 2025.83, for sorting the index newest-first. */
+export function startOf(t: string): number {
+  const [mon, year] = t.split("—")[0].trim().split(/\s+/);
+  return Number(year) + MONTHS.indexOf(mon) / 12;
+}

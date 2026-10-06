@@ -1,45 +1,48 @@
 import type { Metadata, Viewport } from 'next';
-import { Bricolage_Grotesque, IBM_Plex_Mono, Inter } from 'next/font/google';
+import { JetBrains_Mono, Newsreader, Schibsted_Grotesk } from 'next/font/google';
 import './globals.css';
-import { QualityProvider } from '@/lib/quality';
 import { PROFILE } from '@/lib/data';
 
-// Bricolage Grotesque is a variable font; omitting `weight` pulls the whole
-// wght axis so the headline scale can use 400–800 without extra requests.
-const display = Bricolage_Grotesque({
+// Newsreader is variable on both weight and optical size; leaving `weight`
+// out pulls the whole axis so display sizes get the high-contrast cut.
+const serif = Newsreader({
   subsets: ['latin'],
-  variable: '--font-display-face',
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
+  variable: '--font-serif-face',
   display: 'swap',
 });
 
-const body = Inter({
+const sans = Schibsted_Grotesk({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-body-face',
+  variable: '--font-sans-face',
   display: 'swap',
 });
 
-const mono = IBM_Plex_Mono({
+const mono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '500'],
   variable: '--font-mono-face',
   display: 'swap',
 });
 
+// An "S" set in the serif, on paper, with the orange full stop.
 const FAVICON =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E" +
-  "%3Crect width='40' height='40' rx='11' fill='%23F4F5F7'/%3E" +
-  "%3Cpath d='M26.4 13.2c-1.5-1.9-4-3-6.6-2.8-3.3.2-5.9 2.3-5.8 4.9.1 2.5 2.4 3.7 5.9 4.5 3.5.8 5.8 2 5.9 4.5.1 2.6-2.5 4.7-5.8 4.9-2.6.2-5.1-.9-6.6-2.8' fill='none' stroke='%2305060A' stroke-width='3.4' stroke-linecap='round'/%3E" +
-  "%3Cellipse cx='20' cy='20' rx='15.5' ry='6' fill='none' stroke='%23E10600' stroke-width='2.2' transform='rotate(-28 20 20)'/%3E" +
-  "%3Ccircle cx='32.4' cy='13.4' r='3.1' fill='%23E10600'/%3E%3C/svg%3E";
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E" +
+  "%3Crect width='32' height='32' rx='7' fill='%23161513'/%3E" +
+  "%3Ctext x='14' y='24' font-family='Georgia,serif' font-size='22' text-anchor='middle' fill='%23efece5'%3ES%3C/text%3E" +
+  "%3Ccircle cx='24.5' cy='22.2' r='2.4' fill='%23dd4a1c'/%3E%3C/svg%3E";
+
+const DESCRIPTION =
+  'AI/ML and data engineer building agentic systems, LLM tooling, data pipelines and applied deep learning — from raw data to the device in someone’s hand.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tendool.me'),
-  title: `${PROFILE.full} — AI/ML Engineer`,
-  description:
-    'AI/ML Engineer specializing in agentic AI, LLM systems, computer vision, and applied deep learning across healthcare, agriculture, robotics, and enterprise.',
+  title: `${PROFILE.full} — AI/ML & Data Engineer`,
+  description: DESCRIPTION,
   keywords: [
     'AI Engineer',
+    'Data Engineer',
     'Machine Learning',
     'Agentic AI',
     'LLM',
@@ -51,33 +54,46 @@ export const metadata: Metadata = {
   authors: [{ name: PROFILE.full }],
   icons: { icon: FAVICON },
   openGraph: {
-    title: `${PROFILE.full} — AI/ML Engineer`,
-    description:
-      'Agentic AI, LLM systems and applied deep learning — from data pipeline through to deployment.',
+    title: `${PROFILE.full} — AI/ML & Data Engineer`,
+    description: DESCRIPTION,
     url: 'https://tendool.me',
     siteName: PROFILE.full,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${PROFILE.full} — AI/ML Engineer`,
-    description: 'Agentic AI, LLM systems and applied deep learning.',
+    title: `${PROFILE.full} — AI/ML & Data Engineer`,
+    description: DESCRIPTION,
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#05060a',
-  colorScheme: 'dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#efece5' },
+    { media: '(prefers-color-scheme: dark)', color: '#11110f' },
+  ],
   width: 'device-width',
   initialScale: 1,
 };
 
+/**
+ * Runs before first paint: picks the theme (saved choice, else the system's)
+ * and flags that JS is on, so reveal-on-scroll styles only ever hide content
+ * that a script is actually going to show again.
+ */
+const BOOT = `(function(){var d=document.documentElement;d.classList.add('js');var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.dataset.theme=t})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body className="text-paper antialiased">
-        <QualityProvider>{children}</QualityProvider>
-      </body>
+    <html
+      lang="en"
+      className={`${serif.variable} ${sans.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: BOOT }} />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

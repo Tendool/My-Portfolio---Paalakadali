@@ -1,79 +1,45 @@
-'use client';
-
-import UniverseCanvas from '@/components/UniverseCanvas';
-import ScrollProvider from '@/components/ScrollProvider';
-import Cursor from '@/components/Cursor';
-import BodyReadout from '@/components/BodyReadout';
-import Nav from '@/components/Nav';
+import fs from 'node:fs';
+import path from 'node:path';
+import { GALLERY } from '@/lib/data';
+import StageMount from '@/components/figures/StageMount';
+import RevealObserver from '@/components/RevealObserver';
+import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import Marquee from '@/components/Marquee';
-import Roster from '@/components/Roster';
-import MissionLog from '@/components/MissionLog';
-import MissionFiles from '@/components/MissionFiles';
-import Album from '@/components/Album';
-import Arsenal from '@/components/Arsenal';
-import Origin from '@/components/Origin';
+import SelectedWork from '@/components/SelectedWork';
+import Experience from '@/components/Experience';
+import ProjectIndex from '@/components/ProjectIndex';
+import About from '@/components/About';
+import Toolkit from '@/components/Toolkit';
+import Education from '@/components/Education';
+import Photographs from '@/components/Photographs';
 import Contact from '@/components/Contact';
-import { PROFILE } from '@/lib/data';
+import Footer from '@/components/Footer';
 
-const CAPABILITIES = [
-  'Agentic AI',
-  'LLM Systems',
-  'RAG',
-  'Computer Vision',
-  'Deep Learning',
-  'Quantum ML',
-  'Robotics',
-  'Big Data',
-];
-
-const DOMAINS = ['Healthcare', 'Agriculture', 'Robotics', 'Enterprise', 'Energy', 'Research'];
+/** Photographs that exist on disk. A missing file is left out, never shown as a gap. */
+function availablePhotos() {
+  const dir = path.join(process.cwd(), 'public', 'assets', 'projects');
+  return GALLERY.filter((g) => fs.existsSync(path.join(dir, g.f)));
+}
 
 export default function Page() {
+  const photos = availablePhotos();
   return (
     <>
-      <UniverseCanvas />
-      <ScrollProvider />
-      <Cursor />
-      <BodyReadout />
-      <Nav />
-
+      <StageMount />
+      <RevealObserver />
+      <Header />
       <main>
         <Hero />
-
-        <Marquee
-          items={CAPABILITIES}
-          tone="accent"
-          speed={26}
-          depth
-          reverse
-          className="py-8 text-[clamp(.95rem,1.8vw,1.45rem)]"
-        />
-
-        <Roster />
-        <MissionLog />
-        <MissionFiles />
-
-        <Marquee
-          items={DOMAINS}
-          tone="quiet"
-          label="Domains"
-          speed={52}
-          className="py-7 text-[clamp(1.05rem,2vw,1.6rem)]"
-        />
-
-        <Album />
-        <Arsenal />
-        <Origin />
+        <SelectedWork />
+        <Experience />
+        <ProjectIndex />
+        <About />
+        <Toolkit />
+        <Education />
+        {photos.length > 0 && <Photographs photos={photos} />}
         <Contact />
       </main>
-
-      <footer className="relative z-10 border-t border-white/10 px-5 py-10 sm:px-8">
-        <div className="mx-auto flex max-w-[1320px] flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="label !text-[.62rem]">{PROFILE.full} — AI/ML Engineer</p>
-          <p className="label !text-[.62rem]">B.Tech AI &amp; Data Science · Class of 2027</p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

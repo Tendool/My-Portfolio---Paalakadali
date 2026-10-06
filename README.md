@@ -1,7 +1,7 @@
 # tendool.me
 
-Portfolio for Sala Tendool Srivatsav — AI/ML Engineer.
-Next.js (App Router) · Tailwind CSS v4 · React Three Fiber · GSAP.
+Portfolio for Sala Tendool Srivatsav — AI/ML & Data Engineer.
+Next.js (App Router) · Tailwind CSS v4 · React Three Fiber.
 
 ## Run
 
@@ -45,56 +45,67 @@ source, and by actually running `PORT=4173 npm run start` and curling it).
 
 | Path | Purpose |
 | --- | --- |
-| `lib/data.ts` | **All copy.** Roster, timeline, projects, arsenal, album, education, contact. Edit here, not in components. |
-| `lib/quality.tsx` | Device-tier detection + live FPS watchdog that scales particle counts and DPR. |
-| `lib/flight.ts` | Scroll / pointer / drag state, read every frame by the 3D layer without re-rendering React. |
-| `lib/stations.ts` | **The flight plan.** Where every body sits along the corridor, and its surface spec. Edit here to re-order or re-place the solar system. |
-| `components/three/Universe.tsx` | Scene root: the scroll-driven camera and every station. |
-| `components/three/Galaxy.tsx` | The hero galaxy: spiral generation, cursor repulsion, scroll split. |
-| `components/three/Bodies.tsx` | One shader for every planet, plus the Sun. |
-| `components/three/Constructs.tsx` | Asteroid belt, satellite, data core, beacon. |
-| `components/three/SkillSphere.tsx` | Skills on a Fibonacci sphere. |
-| `app/globals.css` | Theme tokens and the glassmorphic HUD styles. |
+| `lib/data.ts` | **All copy.** Profile, featured work, every project, experience, toolkit, education, photographs. Edit here, not in components. |
+| `app/page.tsx` | Section order, and the check that decides whether the photographs section appears. |
+| `app/globals.css` | Theme tokens (light and dark), the figure inks, and the few shared styles. |
+| `components/figures/dither.ts` | The one shader every figure uses, plus the cursor-following light. |
+| `components/figures/scenes.tsx` | The drawings: the data → model → device pipeline (hero), agent graph, voice ring, staircase, eye, Bloch sphere, pills. |
+| `components/figures/Backdrop.tsx` | The animated dot-grid page background. |
+| `components/figures/Stage.tsx` | The single fixed canvas that draws the background and every figure. |
+| `components/Portrait.tsx` | The two-ink portrait, dithered on a 2D canvas from `public/assets/profile.png`. |
 
-## Adding album photos
+## Design
+
+Warm paper, near-black ink and one signal orange, set in Newsreader (display),
+Schibsted Grotesk (text) and JetBrains Mono (dates, captions, figure numbers).
+The page reads like a printed report: plain section names, ruled tables and
+illustrations framed with crop marks. Behind everything is a dot grid like
+notebook paper, kept almost invisible: only the crest of a slow wave and the
+area around the cursor bring the dots up.
+
+On screens wider than 1536px the root font size grows gently (to 22px at
+2560px). Every size in the layout is in rem, so type, spacing and columns
+scale together and the page fills large monitors instead of sitting in a
+narrow strip; laptop sizes are unaffected.
+
+Light and dark themes are both first-class. The visitor's system setting
+picks one on the first visit; the toggle in the header overrides it and is
+remembered. Every colour is a token in `app/globals.css` — change a value
+there and the type, rules, figures and portrait all follow, including the
+WebGL side, which reads the `--fig-*` tokens at runtime.
+
+## The figures
+
+Each figure is a small three.js scene drawn in two inks with an 8×8 ordered
+(Bayer) dither, so they print like 1-bit illustrations rather than renders.
+
+- **One canvas, many figures.** Every `<Figure>` is a drei `View`: a
+  transparent box in the page that a single fixed canvas behind the content
+  scissors and draws into. Every figure and the background share one WebGL
+  context, and a figure that is scrolled away costs nothing.
+- **Lit by the cursor.** Each figure's light swings towards wherever the mouse
+  is relative to that figure, so everything on screen shares one moving lamp.
+  On touch screens the light drifts on its own.
+- **Hover a project** and its figure re-inks in the accent.
+- **The hero is the whole job in one drawing**: records stream out of a stack
+  of databases into a neural network, signals fire through its layers, and the
+  answer flies out as tokens into a phone where a reply types itself out. Drag
+  it to turn it; it keeps the throw, then settles back to its resting angle.
+
+Everything is built from primitives in code — there are no model or texture
+files. With `prefers-reduced-motion` the figures and the background wave hold
+still (the light still follows the cursor). Without WebGL the frames show a quiet dot screen instead.
+
+## Adding project photographs
 
 Drop images into `public/assets/projects/` using the exact filenames listed in
-the `GALLERY` array in `lib/data.ts`. Each frame fills itself in on reload; a
-missing file degrades to an on-theme "No Signal" panel naming the file to add.
-Aim for ~1600px on the long edge, landscape, under ~400KB.
+the `GALLERY` array in `lib/data.ts`, then rebuild. A "From the bench"
+section appears automatically once at least one file exists; entries without a
+file are simply left out. Aim for ~1600px on the long edge, landscape, under
+~400KB.
 
 **Client work stays labelled by capability only** — no internal project names,
 no screenshots showing client branding, employee data or internal URLs.
-
-## The 3D layer
-
-One WebGL scene runs behind the whole page and the camera flies down it as you
-scroll — out through the solar system in real order, the asteroid belt sitting
-between Mars and Jupiter where it belongs, then deep-space constructs.
-
-- **Drag the galaxy** (outside panels, links and buttons) to spin it; it coasts
-  to a stop.
-- **Move the cursor over it** and stars are shouldered aside individually,
-  returning to their exact positions as it leaves.
-- **Scroll** and the disc parts left and right, clearing the middle of the page.
-  Scrolling back to the top reassembles it.
-- **Drag the skill sphere** in the Arsenal to bring its far side round.
-
-Every object is procedural — there are no model or texture files. Planets share
-one shader driven by a `kind` (rock / terran / gas / ice) plus band and grain
-amounts, so Mercury and Jupiter are the same draw call with different uniforms.
-
-Quality scales automatically: 27k galaxy stars and 420 asteroids on a desktop
-GPU down to 4k and 80 on a phone, with a frame watchdog that drops a tier if the
-page cannot hold 60fps. Lateral offsets are squeezed on narrow viewports, or
-every body would fall outside a phone's much narrower frustum.
-
-## Theme
-
-Black ground, paper-white type, one accent (`#8B5CF6`) rationed to CTAs, hovers,
-glows and planet rim-light. The accent lives in one place: `--color-accent` in
-`app/globals.css`, mirrored by `ACCENT` in `components/three/Universe.tsx` for
-the WebGL side.
 
 ## Notes
 
